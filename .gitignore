@@ -5,5 +5,6 @@
 # ignoring temp build files and other clutter
 bin/
 distribution/
+distributions/
 dev/
 run.sh

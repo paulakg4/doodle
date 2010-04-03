@@ -6,7 +6,7 @@
 ================================================================================
     
     Doodle is a tool for the PDE that lets you visually edit beginShape()-
-    endShape() blocks. Code can be read to vetor objects that then can be
+    endShape() blocks. Code can be parsed to vector objects that then can be
     edited and converted back to code.
     
 ================================================================================
