@@ -1,0 +1,247 @@
+<project name="Doodle" default="build" basedir="../">
+
+  <description>Doodle tool build file.</description>
+  
+  <!-- your Processing "sketchbook" -->
+  <property name="processing" location="/Users/fjenett/Documents/Processing" />
+  
+  <!-- where is "core.jar" of your Processing application? -->
+  <property name="libraryClasspath" location="/Applications/Processing.app/Contents/Resources/Java" />
+  
+  <property name="author" value="Florian Jenett" />
+  <property name="copyright" value="(c) 2008-2010" />
+  <property name="toolName" value="Doodle" />
+  <property name="versionNumber" value="0.0.4" />
+  <property name="yourLink" value="http://www.bezier.de/" />
+  <property name="javaVersion" value="1.5" />
+  <path id="library-classpath">
+    <fileset dir="${libraryClasspath}">
+      <include name="core.jar" />
+      <include name="pde.jar" />
+    </fileset>
+    <fileset dir="lib">
+      <include name="batikfont.jar" />
+      <include name="geomerative.jar" />
+      <include name="controlP5.jar" />
+    </fileset>
+  </path>
+  
+  <!-- no changes or adjustments required below -->
+  
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <pathelement location="./resources/code/ant-contrib-1.0b3.jar" />
+    </classpath>
+  </taskdef>
+  
+  <property name="jarFile" value="${toolName}.jar" />
+  <property name="src" location="src" />
+  <property name="src_versioned" location="src-versioned" />
+  <property name="bin" location="bin" />
+  <property name="javadoc" location="documentation" />
+  <property name="dist" location="distribution" />
+  <property name="distros" location="distributions" />
+  
+  <!-- Create the time stamp -->
+  <tstamp>
+    <format property="date" pattern="MM/dd/yyyy" offset="0" unit="hour" />
+  </tstamp>
+
+
+  <target name="init">
+    <echo>${date}</echo>
+    <echo>Properties initialized. 
+    src path ${src} 
+    bin path ${bin} 
+    libraryClasspath ${libraryClasspath} 
+    processing Libraries ${processing} 
+    java version ${javaVersion}</echo>
+    <echo>building tool ...</echo>
+    <mkdir dir="${dist}" />
+    <mkdir dir="${bin}" />
+  </target>
+  
+  
+  <!-- compile the tool -->
+
+
+  <target name="compile" depends="init" description="compile the source">
+    <antcall target="versionSources" />
+    <javac srcdir="${src_versioned}" destdir="${bin}" source="${javaVersion}">
+      <classpath>
+        <path refid="library-classpath" />
+      </classpath>
+    </javac>
+  </target>
+  
+  
+  <!-- build the distribution of the tool -->
+
+
+  <target name="build" depends="compile" description="generate the distribution">
+    
+    <!-- delete the previous content of the ${dist} folder -->
+    <delete dir="${dist}" />
+    
+    <!-- build the structure for ${dist} -->
+    <mkdir dir="${dist}" />
+    <mkdir dir="${dist}/tool" />
+    <!--mkdir dir="${dist}/examples" /-->
+    <copy todir="${bin}/data">
+      <fileset dir="resources/data" />
+    </copy>
+    <jar jarfile="${dist}/tool/${jarFile}" basedir="${bin}" />
+    <copy todir="${dist}/tool/">
+      <fileset dir="lib" />
+    </copy>
+    <!--copy todir="${dist}/Examples">
+      <fileset dir="Examples" />
+    </copy-->
+    <copy todir="${dist}/src">
+      <fileset dir="${src_versioned}" />
+    </copy>
+    <copy todir="${dist}/lib">
+      <fileset dir="lib" />
+    </copy>
+    <copy todir="${dist}/resources">
+      <fileset dir="resources" />
+    </copy>
+    <!--antcall target="makeJavadoc"/-->
+    
+    <!-- copy the jar file to processing's tools -->
+    <delete dir="${processing}/tools/${toolName}" />
+    <mkdir dir="${processing}/tools/${toolName}" />
+    <copy todir="${processing}/tools/${toolName}">
+      <fileset dir="${dist}" />
+    </copy>
+    
+    <!-- zip the distribution of the tool -->
+    <delete file="${dist}/${toolName}.zip" />
+    <delete file="${toolName}_${versionNumber}.zip" />
+    <zip destfile="${dist}/${toolName}.zip" basedir="${dist}" excludes="**/_DS.Store" />
+    <mkdir dir="${distros}" />
+    <move file="${dist}/${toolName}.zip" toFile="${distros}/${toolName}_${versionNumber}.zip" />
+    <!-- organize the ${dist} folder -->
+    <!--mkdir dir="${dist}/web" />
+        <move todir="${dist}/web/documentation">
+                <fileset dir="${dist}/documentation" />
+        </move-->
+    <!--move todir="${dist}/web/examples">
+                <fileset dir="${dist}/examples" />
+        </move-->
+    <!--delete dir="${dist}/tool" /-->
+    <!--copy todir="${dist}/web">
+                <fileset dir="web" />
+        </copy-->
+    <!--
+        format the index.html file. 
+        regular expressions are used to parse the web index.html file. 
+        key words starting and ending with ## are replaced by values 
+        defined earlier in the beginning of this build file.
+        -->
+    <!--
+        <replaceregexp file="${dist}/web/index.html"
+                                 match="##yourLibrary##"
+                                 replace="${libraryName}"
+                                 flags="g" />
+        
+        <replaceregexp file="${dist}/web/index.html"
+	                                               match="##author##"
+	                                               replace="${author}"
+	                                               flags="g" />
+        
+        <replaceregexp file="${dist}/web/index.html"
+	                                               match="##versionNumber##"
+	                                               replace="${versionNumber}"
+	                                               flags="g" />
+        
+	<replaceregexp file="${dist}/web/index.html"
+	                                               match="##yourLink##"
+                                                        replace="${yourLink}"
+	                                               flags="g" />
+        
+        <replaceregexp file="${dist}/web/index.html"
+                                                        match="##date##"
+                                                        replace="${date}"
+                                                        flags="g" />
+        
+        <antcall target="processExamples" />
+        
+        <replaceregexp file="${dist}/web/index.html"
+                                                                match="##examples##"
+                                                                replace=""
+                                                                flags="g" />
+         -->
+    <!-- finish organizating library's distribution -->
+    <!--mkdir dir="${dist}/web/download" />
+        <copy file="${dist}/${toolName}.zip" todir="${dist}/web/download" />
+        
+        <copy todir="${processing}/${toolName}/documentation">
+	       <fileset dir="${javadoc}" />
+	</copy-->
+    <delete dir="${bin}" />
+    <delete dir="${dist}" />
+    <delete dir="${javadoc}" />
+    <delete dir="${src_versioned}" />
+    <!-- done, finished. -->
+    <echo>done, finished.</echo>
+  </target>
+  
+  
+  <!-- generate and dist javadocs -->
+
+
+  <target name="makeJavadoc">
+    <!-- create the java documentation of the tool -->
+    <mkdir dir="${javadoc}" />
+    <javadoc bottom="processing tool ${toolName} by ${author}. ${copyright}" classpathref="library-classpath" destdir="${javadoc}" verbose="false" stylesheetfile="resources/stylesheet.css" doctitle="Javadocs: ${toolName}" public="true" version="false" windowtitle="Javadocs: ${toolName}">
+      <taglet name="ExampleTaglet" path="resources/code" />
+      <fileset dir="${src}" defaultexcludes="yes">
+        <!-- #### (9) add packages to be added to documentation. #### -->
+        <include name="**/*" />
+      </fileset>
+    </javadoc>
+    <mkdir dir="${dist}/documentation" />
+    <copy todir="${dist}/documentation">
+      <fileset dir="${javadoc}" />
+    </copy>
+  </target>
+  
+  
+  <!-- parsing the source files adding version, date -->
+
+
+  <target name="versionSources">
+    <mkdir dir="${src_versioned}" />
+    <copy toDir="${src_versioned}">
+      <fileset dir="${src}" />
+    </copy>
+    <path id="src.contents">
+      <fileset dir="${src_versioned}" includes="**/*.java" />
+    </path>
+    <property name="src.list" refid="src.contents" />
+    <foreach list="${src.list}" param="file" target="versionSourcefile" delimiter=":" />
+  </target>
+
+
+  <target name="versionSourcefile">
+    <replaceregexp file="${file}" match="##version##" replace="${versionNumber}" flags="g" />
+    <replaceregexp file="${file}" match="##date##" replace="${date}" flags="g" />
+  </target>
+  
+  
+  <!-- parsing the examples folder -->
+
+
+  <target name="processExamples">
+    <dirset id="examples.contents" dir="examples" excludes="*/*" />
+    <property name="examples.list" refid="examples.contents" />
+    <foreach list="${examples.list}" target="addExamples" param="exampleDir" delimiter=";"></foreach>
+  </target>
+
+
+  <target name="addExamples">
+    <replaceregexp file="${dist}/web/index.html" match="(##examples##)" replace="&lt;li&gt;&lt;a href=&quot;examples/${exampleDir}/${exampleDir}.pde&quot;&gt;${exampleDir}&lt;/a&gt;&lt;/li&gt; \1" flags="g" />
+  </target>
+  
+</project>

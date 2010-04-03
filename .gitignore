@@ -1,0 +1,9 @@
+
+# ignoring Mac files
+.DS_Store
+
+# ignoring temp build files and other clutter
+bin/
+distribution/
+dev/
+run.sh

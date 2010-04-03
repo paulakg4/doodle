@@ -1,0 +1,1 @@
+package de.bezier.tools;public interface DParserListener{	public void addShape ( String type, float[] values );}

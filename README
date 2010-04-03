@@ -1,0 +1,17 @@
+================================================================================
+    
+    D O O D L E
+    A very simplistic inline vector editor for the Processing IDE.
+    
+================================================================================
+    
+    Doodle is a tool for the PDE that lets you visually edit beginShape()-
+    endShape() blocks. Code can be read to vetor objects that then can be
+    edited and converted back to code.
+    
+================================================================================
+
+    Curve Fitting code is based on code by Atanu Mohanty with minor changes:
+    http://www.serc.iisc.ernet.in/~amohanty/SE288/lagrange/curves.html
+    
+================================================================================
