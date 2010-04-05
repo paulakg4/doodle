@@ -86,27 +86,40 @@
     <!-- build the structure for ${dist} -->
     <mkdir dir="${dist}" />
     <mkdir dir="${dist}/tool" />
-    <!--mkdir dir="${dist}/examples" /-->
+    
+    <!-- zip the tool jar and copy needed jars -->
     <copy todir="${bin}/data">
       <fileset dir="resources/data" />
     </copy>
-    <jar jarfile="${dist}/tool/${jarFile}" basedir="${bin}" />
-    <copy todir="${dist}/tool/">
+    
+    <jar jarfile="tool/${jarFile}" basedir="${bin}" />
+    
+    <copy todir="tool/">
       <fileset dir="lib" />
     </copy>
-    <!--copy todir="${dist}/Examples">
-      <fileset dir="Examples" />
-    </copy-->
+    
+    <!-- package the distribution -->
+    <copy todir="${dist}/tool/">
+      <fileset dir="tool/" />
+    </copy>
+    
     <copy todir="${dist}/src">
       <fileset dir="${src_versioned}" />
     </copy>
+    
     <copy todir="${dist}/lib">
       <fileset dir="lib" />
     </copy>
+    
     <copy todir="${dist}/resources">
       <fileset dir="resources" />
     </copy>
-    <!--antcall target="makeJavadoc"/-->
+    
+    <!-- zip the distribution of the tool -->
+    <delete file="${toolName}_${versionNumber}.zip" />
+    <mkdir dir="${distros}" />
+    <zip destfile="${distros}/${toolName}_${versionNumber}.zip"
+         basedir="${dist}" excludes="**/_DS.Store" />
     
     <!-- copy the jar file to processing's tools -->
     <delete dir="${processing}/tools/${toolName}" />
@@ -115,101 +128,26 @@
       <fileset dir="${dist}" />
     </copy>
     
-    <!-- zip the distribution of the tool -->
-    <delete file="${dist}/${toolName}.zip" />
-    <delete file="${toolName}_${versionNumber}.zip" />
-    <zip destfile="${dist}/${toolName}.zip" basedir="${dist}" excludes="**/_DS.Store" />
-    <mkdir dir="${distros}" />
-    <move file="${dist}/${toolName}.zip" toFile="${distros}/${toolName}_${versionNumber}.zip" />
-    <!-- organize the ${dist} folder -->
-    <!--mkdir dir="${dist}/web" />
-        <move todir="${dist}/web/documentation">
-                <fileset dir="${dist}/documentation" />
-        </move-->
-    <!--move todir="${dist}/web/examples">
-                <fileset dir="${dist}/examples" />
-        </move-->
-    <!--delete dir="${dist}/tool" /-->
-    <!--copy todir="${dist}/web">
-                <fileset dir="web" />
-        </copy-->
-    <!--
-        format the index.html file. 
-        regular expressions are used to parse the web index.html file. 
-        key words starting and ending with ## are replaced by values 
-        defined earlier in the beginning of this build file.
-        -->
-    <!--
-        <replaceregexp file="${dist}/web/index.html"
-                                 match="##yourLibrary##"
-                                 replace="${libraryName}"
-                                 flags="g" />
-        
-        <replaceregexp file="${dist}/web/index.html"
-	                                               match="##author##"
-	                                               replace="${author}"
-	                                               flags="g" />
-        
-        <replaceregexp file="${dist}/web/index.html"
-	                                               match="##versionNumber##"
-	                                               replace="${versionNumber}"
-	                                               flags="g" />
-        
-	<replaceregexp file="${dist}/web/index.html"
-	                                               match="##yourLink##"
-                                                        replace="${yourLink}"
-	                                               flags="g" />
-        
-        <replaceregexp file="${dist}/web/index.html"
-                                                        match="##date##"
-                                                        replace="${date}"
-                                                        flags="g" />
-        
-        <antcall target="processExamples" />
-        
-        <replaceregexp file="${dist}/web/index.html"
-                                                                match="##examples##"
-                                                                replace=""
-                                                                flags="g" />
-         -->
-    <!-- finish organizating library's distribution -->
-    <!--mkdir dir="${dist}/web/download" />
-        <copy file="${dist}/${toolName}.zip" todir="${dist}/web/download" />
-        
-        <copy todir="${processing}/${toolName}/documentation">
-	       <fileset dir="${javadoc}" />
-	</copy-->
+    <!-- clean up -->
     <delete dir="${bin}" />
     <delete dir="${dist}" />
     <delete dir="${javadoc}" />
     <delete dir="${src_versioned}" />
-    <!-- done, finished. -->
-    <echo>done, finished.</echo>
+    
   </target>
   
-  
-  <!-- generate and dist javadocs -->
-
-
-  <target name="makeJavadoc">
-    <!-- create the java documentation of the tool -->
-    <mkdir dir="${javadoc}" />
-    <javadoc bottom="processing tool ${toolName} by ${author}. ${copyright}" classpathref="library-classpath" destdir="${javadoc}" verbose="false" stylesheetfile="resources/stylesheet.css" doctitle="Javadocs: ${toolName}" public="true" version="false" windowtitle="Javadocs: ${toolName}">
-      <taglet name="ExampleTaglet" path="resources/code" />
-      <fileset dir="${src}" defaultexcludes="yes">
-        <!-- #### (9) add packages to be added to documentation. #### -->
-        <include name="**/*" />
-      </fileset>
-    </javadoc>
-    <mkdir dir="${dist}/documentation" />
-    <copy todir="${dist}/documentation">
-      <fileset dir="${javadoc}" />
-    </copy>
+  <target name="test">
+    <java classname="de.bezier.tools.tests.DoodleTester" fork="true">
+      <classpath>
+        <path refid="library-classpath" />
+        <path>
+          <fileset dir="tool" includes="**/*.jar" />
+        </path>
+      </classpath>
+    </java>
   </target>
-  
   
   <!-- parsing the source files adding version, date -->
-
 
   <target name="versionSources">
     <mkdir dir="${src_versioned}" />
@@ -223,25 +161,9 @@
     <foreach list="${src.list}" param="file" target="versionSourcefile" delimiter=":" />
   </target>
 
-
   <target name="versionSourcefile">
     <replaceregexp file="${file}" match="##version##" replace="${versionNumber}" flags="g" />
     <replaceregexp file="${file}" match="##date##" replace="${date}" flags="g" />
-  </target>
-  
-  
-  <!-- parsing the examples folder -->
-
-
-  <target name="processExamples">
-    <dirset id="examples.contents" dir="examples" excludes="*/*" />
-    <property name="examples.list" refid="examples.contents" />
-    <foreach list="${examples.list}" target="addExamples" param="exampleDir" delimiter=";"></foreach>
-  </target>
-
-
-  <target name="addExamples">
-    <replaceregexp file="${dist}/web/index.html" match="(##examples##)" replace="&lt;li&gt;&lt;a href=&quot;examples/${exampleDir}/${exampleDir}.pde&quot;&gt;${exampleDir}&lt;/a&gt;&lt;/li&gt; \1" flags="g" />
   </target>
   
 </project>

@@ -49,10 +49,10 @@ implements Tool, WindowListener
     	return "Doodle";
     }
 
-	public void init ( Editor _e )
-	{
-		editor = _e;
-	}
+    public void init ( Editor _e )
+    {
+	editor = _e;
+    }
 
     public void run ()
     {
@@ -78,12 +78,8 @@ implements Tool, WindowListener
         
     	frame.show();
     	frame.setVisible( true );
-    	
-        boolean flag = true;
         
         sayHello();
-        
-        //papplet.init();
     }
     
     void halt ()

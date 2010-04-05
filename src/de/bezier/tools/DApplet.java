@@ -28,49 +28,26 @@ implements DParserListener
     Sketch sketch;
     Tool tool;
     
-    int widthO, heightO;
-    boolean rendererWarning;
+    String[] exportArrayNames;
+    
+    private RSubshape shapeToAdd;
+    private RPoint firstPoint;
+    private boolean isTempShape;
+    
+    public DApplet ( )
+    {
+	
+    }
 
     DApplet ( Editor _e, Doodle _t )
     {
-        editor = _e;
-        sketch = _e.getSketch();
-        sketchChanged();
-    }
-    
-    private void setupDoodle ()
-    {
-    	size( 400, 400 );
-    	widthO = width;
-    	heightO = height;
+	editor = _e;
+	sketch = _e.getSketch();
     }
     
     private void checkChanges ()
     {
-    	if ( sketch == null || sketch != editor.getSketch() )
-    	{
-    	    sketchChanged();
-    	}
-    	
-    	if ( widthO != width && heightO != height )
-    	{
-    	    sketchSizeChanged();
-    	}
-    }
-    
-    private void sketchChanged ()
-    {
-	println( sketchPath );
-	
-	sketch = editor.getSketch();
-		
-        //println( "Sketch changed to: " + sketch.getName() );
-    }
-    
-    private void sketchSizeChanged ()
-    {
-        widthO = width; heightO = height;
-        //println( "Sketch size changed to: " + width + " , " + height );
+    	/* see if sketch is still open? */
     }
 
     public void size ( int i, int j )
@@ -219,8 +196,6 @@ implements DParserListener
     	return cde;
     }
     
-    String[] exportArrayNames;
-    
     private String toArray ( RSubshape shape )
     {
     	String cde = "";
@@ -337,10 +312,6 @@ implements DParserListener
 	    }
     	}
     }
-    
-    private RSubshape shapeToAdd;
-    private RPoint firstPoint;
-    private boolean isTempShape;
     
     public void addShape ( String type, float[] values )
     {
@@ -547,8 +518,6 @@ implements DParserListener
     
     public void setup ()
     {
-	setupDoodle ();
-    
 	size( 500, 500 );
 	globX = globXDefault;
 	globY = globYDefault;
@@ -598,9 +567,7 @@ implements DParserListener
     }
     
     public void draw ()
-    {
-	checkChanges();
-	    
+    {    
 	background( 255 );
 	
 	pushMatrix();
