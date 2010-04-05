@@ -119,7 +119,8 @@ implements DParserListener
         }
         
         if ( !toCommand )
-        {	
+        {
+	    cde = cde + "/*Uncomment these if you haven't already:*/";
 	    cde = cde + "/*\nvoid drawArray ( float[] arr ) { " +
 	    " if ( arr.length == 2 ) line( arr[0],arr[1],arr[2],arr[3] ); else if ( arr.length == 6 ) " +
 	    " bezier( arr[0],arr[1],arr[2],arr[3],arr[4],arr[5],arr[6],arr[7] ); };";
@@ -162,7 +163,7 @@ implements DParserListener
     	RPoint[] pnts = shape.getPoints();
     	
     	if ( shape.commands == null && pnts != null && pnts.length > 0 ) 
-    	    return "point( " + pnts[0].x + " , " + pnts[0].x + " );";
+    	    return "point( " + f(pnts[0].x) + " , " + f(pnts[0].y) + " );";
     		
     	if ( shape.commands.length == 1 )
     	{
@@ -172,23 +173,23 @@ implements DParserListener
 	    switch ( cmd.getCommandType() )
 	    {
 		case RCommand.LINETO:
-		    return "line( " + pnts[0].x + " , " + pnts[0].y + " , " +
-				      pnts[1].x + " , " + pnts[1].y + " );";
+		    return "line( " + f(pnts[0].x) + " , " + f(pnts[0].y) + " , " +
+				      f(pnts[1].x) + " , " + f(pnts[1].y) + " );";
 		case RCommand.QUADBEZIERTO:	// needs fix since bezier() is cubic
-		    return "bezier( " + pnts[0].x + " , " + pnts[0].y + " , " +
-					pnts[1].x + " , " + pnts[1].y + " , " +
-					pnts[1].x + " , " + pnts[1].y + " , " +
-					pnts[2].x + " , " + pnts[2].y + " );";
+		    return "bezier( " + f(pnts[0].x) + " , " + f(pnts[0].y) + " , " +
+					f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+					f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+					f(pnts[2].x) + " , " + f(pnts[2].y) + " );";
 		case RCommand.CUBICBEZIERTO:
-		    return "bezier( " + pnts[0].x + " , " + pnts[0].y + " , " +
-					pnts[1].x + " , " + pnts[1].y + " , " +
-					pnts[2].x + " , " + pnts[2].y + " , " +
-					pnts[3].x + " , " + pnts[3].y + " );";
+		    return "bezier( " + f(pnts[0].x) + " , " + f(pnts[0].y) + " , " +
+					f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+					f(pnts[2].x) + " , " + f(pnts[2].y) + " , " +
+					f(pnts[3].x) + " , " + f(pnts[3].y) + " );";
 	    }
     	}
     	
     	cde = "beginShape();\n";
-    	cde = cde + "vertex( " + pnts[0].x + " , " + pnts[0].y + " );\n";
+    	cde = cde + "vertex( " + f(pnts[0].x) + " , " + f(pnts[0].y) + " );\n";
     		
     	for ( int i = 0; i < shape.commands.length; i++ )
     	{
@@ -198,17 +199,17 @@ implements DParserListener
 	    switch ( cmd.getCommandType() )
 	    {
 		case RCommand.LINETO:
-		    cde = cde + "vertex( " + pnts[1].x + " , " + pnts[1].y + " );\n";
+		    cde = cde + "vertex( " + f(pnts[1].x) + " , " + f(pnts[1].y) + " );\n";
 		    break;
 		case RCommand.QUADBEZIERTO:	// needs fix since bezier() is cubic
-		    cde = cde + "bezierVertex( " + pnts[1].x + " , " + pnts[1].y + " , " +
-						   pnts[1].x + " , " + pnts[1].y + " , " +
-						   pnts[2].x + " , " + pnts[2].y + " );\n";
+		    cde = cde + "bezierVertex( " + f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+						   f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+						   f(pnts[2].x) + " , " + f(pnts[2].y) + " );\n";
 		    break;
 		case RCommand.CUBICBEZIERTO:
-		    cde = cde + "bezierVertex( " + pnts[1].x + " , " + pnts[1].y + " , " +
-						   pnts[2].x + " , " + pnts[2].y + " , " +
-						   pnts[3].x + " , " + pnts[3].y + " );\n";
+		    cde = cde + "bezierVertex( " + f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+						   f(pnts[2].x) + " , " + f(pnts[2].y) + " , " +
+						   f(pnts[3].x) + " , " + f(pnts[3].y) + " );\n";
 		    break;
 	    }
     	}
@@ -242,24 +243,24 @@ implements DParserListener
 		case RCommand.LINETO:
 			name = uniqueName("line_","");
 			cde = "float[] " + name + " = new float[]{ " + 
-							  pnts[0].x + " , " + pnts[0].y + " , " +
-							  pnts[1].x + " , " + pnts[1].y + " };";
+							  f(pnts[0].x) + " , " + f(pnts[0].y) + " , " +
+							  f(pnts[1].x) + " , " + f(pnts[1].y) + " };";
 			break;
 		case RCommand.QUADBEZIERTO:	// needs fix since bezier() is cubic
 			name = uniqueName("bezier_","");
 			cde = "float[] " + uniqueName("bezier_","") + " = new float[]{ " + 
-								pnts[0].x + " , " + pnts[0].y + " , " +
-								pnts[1].x + " , " + pnts[1].y + " , " +
-								pnts[1].x + " , " + pnts[1].y + " , " +
-								pnts[2].x + " , " + pnts[2].y + " };";
+								f(pnts[0].x) + " , " + f(pnts[0].y) + " , " +
+								f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+								f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+								f(pnts[2].x) + " , " + f(pnts[2].y) + " };";
 			break;
 		case RCommand.CUBICBEZIERTO:
 			name = uniqueName("bezier_","");
 			cde = "float[] " + uniqueName("bezier_","") + " = new float[]{ " + 
-								pnts[0].x + " , " + pnts[0].y + " , " +
-								pnts[1].x + " , " + pnts[1].y + " , " +
-								pnts[2].x + " , " + pnts[2].y + " , " +
-								pnts[3].x + " , " + pnts[3].y + " };";
+								f(pnts[0].x) + " , " + f(pnts[0].y) + " , " +
+								f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+								f(pnts[2].x) + " , " + f(pnts[2].y) + " , " +
+								f(pnts[3].x) + " , " + f(pnts[3].y) + " };";
 			break;
 	    }
 	    
@@ -275,7 +276,7 @@ implements DParserListener
 	exportArrayNames = append( exportArrayNames, name );
     	
     	cde = "float[][] " + name + " = new float[][]{\n";
-    	cde = cde + "new float[]{ " + pnts[0].x + " , " + pnts[0].y + " },\n";
+    	cde = cde + "new float[]{ " + f(pnts[0].x) + " , " + f(pnts[0].y) + " },\n";
     		
     	for ( int i = 0; i < shape.commands.length; i++ )
     	{
@@ -285,17 +286,17 @@ implements DParserListener
 	    switch ( cmd.getCommandType() )
 	    {
 		case RCommand.LINETO:
-			cde = cde + "new float[]{ " + pnts[1].x + " , " + pnts[1].y + " }";
+			cde = cde + "new float[]{ " + f(pnts[1].x) + " , " + f(pnts[1].y) + " }";
 			break;
 		case RCommand.QUADBEZIERTO:	// needs fix since bezier() is cubic
-			cde = cde + "new float[]{ " + pnts[1].x + " , " + pnts[1].y + " , " +
-						    pnts[1].x + " , " + pnts[1].y + " , " +
-						    pnts[2].x + " , " + pnts[2].y + " }";
+			cde = cde + "new float[]{ " + f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+						      f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+						      f(pnts[2].x) + " , " + f(pnts[2].y) + " }";
 			break;
 		case RCommand.CUBICBEZIERTO:
-			cde = cde + "new float[]{ " + pnts[1].x + " , " + pnts[1].y + " , " +
-						    pnts[2].x + " , " + pnts[2].y + " , " +
-						    pnts[3].x + " , " + pnts[3].y + " }";
+			cde = cde + "new float[]{ " + f(pnts[1].x) + " , " + f(pnts[1].y) + " , " +
+						      f(pnts[2].x) + " , " + f(pnts[2].y) + " , " +
+						      f(pnts[3].x) + " , " + f(pnts[3].y) + " }";
 			break;
 	    }
 	    if ( i < shape.commands.length-1 )
@@ -307,6 +308,14 @@ implements DParserListener
     	cde = cde + "};";
     	
     	return cde;
+    }
+    
+    /**
+     *	downscale precision of the floats
+     */
+    private float f ( float value )
+    {
+	return ((int)(value * 100))/100.0f;
     }
     
     private String uniqueName ( String pre, String post )
@@ -374,17 +383,17 @@ implements DParserListener
 	    RPoint org = new RPoint( values[0], values[1]-h2 );
 	    shapes = (RSubshape[])append( shapes, new RSubshape(org) );
 	    shapes[shapes.length-1].addBezierTo( values[0] + w2 / mbn, values[1]-h2,
-						values[0] + w2, values[1] - h2 / mbn,
-						values[0] + w2, values[1] );
+						 values[0] + w2, values[1] - h2 / mbn,
+						 values[0] + w2, values[1] );
 	    shapes[shapes.length-1].addBezierTo( values[0] + w2, values[1] + h2 / mbn,
-						values[0] + w2 / mbn, values[1] + h2,
+						 values[0] + w2 / mbn, values[1] + h2,
     						 values[0], values[1] + h2 );
 	    shapes[shapes.length-1].addBezierTo( values[0] - w2 / mbn, values[1] + h2,
-						values[0] - w2, values[1] + h2 / mbn,
-						values[0] - w2, values[1] );
+						 values[0] - w2, values[1] + h2 / mbn,
+						 values[0] - w2, values[1] );
 	    shapes[shapes.length-1].addBezierTo( new RPoint( values[0] - w2, values[1] - h2 / mbn ),
-						new RPoint( org.x - w2 / mbn, org.y ),
-						org );
+						 new RPoint( org.x - w2 / mbn, org.y ),
+						 org );
     
 	    selectedShape = shapes[shapes.length-1];
 	    selectedShapeIndex = shapes.length-1;
@@ -473,7 +482,7 @@ implements DParserListener
 		    //TODO: have to handle CLOSE differently to account for bezierVertex
 		    if ( (int)values[0] == PConstants.CLOSE )
 		    {
-			    shapeToAdd.addLineTo( firstPoint );
+			shapeToAdd.addLineTo( firstPoint );
 		    }
 		    
 		    shapes = (RSubshape[])append( shapes, shapeToAdd );
@@ -526,7 +535,7 @@ implements DParserListener
     
     DTool[] tools;
     
-    int currentTool = TOOL_ZOOM_MOVE;
+    int currentTool = TOOL_DOODLE_LINE;
     
     RSubshape[] shapes;
     RSubshape selectedShape;
@@ -534,14 +543,15 @@ implements DParserListener
     
     float globS = 1.0f, globSRev = 1.0f;
     float globX = 0, globY = 0;
+    float globXDefault = 5+20 /*toolbar*/, globYDefault = 5;
     
     public void setup ()
     {
 	setupDoodle ();
     
 	size( 500, 500 );
-	globX = width/2;
-	globY = height/2;
+	globX = globXDefault;
+	globY = globYDefault;
 	
 	cp5 = new ControlP5( this );
 	
@@ -557,24 +567,27 @@ implements DParserListener
 	for ( int i = 0; i < toolsBar.length; i++ )
 	{
 	    if ( i < 4 )
-		    toolsBar[i] = new DoodleButton( toolNames[i], 1, 1+i*21 );
+		toolsBar[i] = new DoodleButton( toolNames[i], 1, 1+i*21 );
 	    else if ( i == 4 )
 	    {    
-			    toolsBar[i] = new DoodleActionButton ( toolNames[i], 1, 1+i*21  ) {
-				    public void run () {
-					    importFromCode();
-				    }
-			    };
+		toolsBar[i] = new DoodleActionButton ( toolNames[i], 1, 1+i*21  )
+		{
+		    public void run ()
+		    {
+			importFromCode();
+		    }
+		};
 	    
 	    }
 	    else if ( i == 5 )
 	    {
-			    toolsBar[i] = new DoodleActionButton ( toolNames[i], 1, 1+i*21  ) {
-				    public void run () {
-					    exportToCode();
-				    }
-			    };
-	    
+		toolsBar[i] = new DoodleActionButton ( toolNames[i], 1, 1+i*21  )
+		{
+		    public void run ()
+		    {
+			exportToCode();
+		    }
+		};
 	    }
 	    toolsBar[i].setId( i );
 	    toolsBar[i].img = loadImage( toolImages[i] );
@@ -586,7 +599,7 @@ implements DParserListener
     
     public void draw ()
     {
-	    checkChanges();
+	checkChanges();
 	    
 	background( 255 );
 	
@@ -638,41 +651,40 @@ implements DParserListener
     
     public void keyPressed ()
     {
-	    
-	    switch ( key )
-	    {
-		    case 'o':
-			    exportToCode();
-			    break;
-		    case 'i':
-			    importFromCode();
-			    break;
-	    }
+	switch ( key )
+	{
+	    case 'o':
+		exportToCode();
+		break;
+	    case 'i':
+		importFromCode();
+		break;
+	}
     
 	if ( key == DELETE || key == BACKSPACE )
 	{
 	    if ( !mousePressed ) // make sure we're not using a tool at that moment
 	    {
-		    if ( selectedShape != null &&
+		if ( selectedShape != null &&
 		     shapes[selectedShapeIndex] == selectedShape )
 		{
-			shapes = (RSubshape[])remove(shapes, selectedShapeIndex);
+		    shapes = (RSubshape[])remove(shapes, selectedShapeIndex);
 		    selectedShapeIndex = -1;
-			selectedShape = null;
-		    }
-		    else
-		    {
-			    //shapes = new RSubshape[0];
+		    selectedShape = null;
+		}
+		else
+		{
+		    //shapes = new RSubshape[0];
 		    shapes = (RSubshape[])remove(shapes, shapes.length-1);
 		    selectedShapeIndex = -1;
-			selectedShape = null;
-		    }
+		    selectedShape = null;
+		}
 	    }
 	}
 	
 	if ( key == ESC )
 	{
-	    key = 0; // prevent ESC from quitting Processing altogether since PApplet calles System.exit(0)
+	    key = 0; // prevent ESC from quitting Processing, since PApplet calles System.exit(0)
 	}
 	
 	tools[currentTool].keyPressed();
@@ -1182,8 +1194,10 @@ implements DParserListener
 	
 	public void doubleClicked ()
 	{
-	    globS = 1.0f; globSRev = globS;
-	    globX = width/2; globY = height/2;
+	    globS = 1.0f;
+	    globSRev = globS;
+	    globX = globXDefault;
+	    globY = globYDefault;
 	}
     }
 
