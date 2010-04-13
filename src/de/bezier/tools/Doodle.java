@@ -3,7 +3,10 @@
  *
  *	<p>
  *	Doodle tool for Processing IDE, a simplistic vector editor for
- *	creating and editing beginShape()-endShape() blocks.
+ *	creating and editing shape commands like:
+ *	 + line, bezier, curve
+ *	 + rect, ellipse
+ *	 + beginShape/endShape blocks
  *	</p>
  *		
  *	@author		florian jenett - mail@bezier.de

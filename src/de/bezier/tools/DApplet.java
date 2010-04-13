@@ -34,10 +34,7 @@ implements DParserListener
     private RPoint firstPoint;
     private boolean isTempShape;
     
-    public DApplet ( )
-    {
-	
-    }
+    public DApplet ( ) { } /* this is mainly used for testing */
 
     DApplet ( Editor _e, Doodle _t )
     {
@@ -307,12 +304,17 @@ implements DParserListener
 	    
 	    if ( !DParser.parseCode( code, this ) )
 	    {
-		System.err.println( "Unable to parse code:" );
-		System.err.println( code );
+		System.err.println( "Doodle: Unable to parse code at selection." );
+		//System.err.println( code );
 	    }
     	}
     }
     
+    /**
+     *	interface DParserListener
+     *
+     *	@see de.bezier.tools.DParserListener.java
+     */
     public void addShape ( String type, float[] values )
     {
 	if ( shapes == null ) shapes = new RSubshape[0];
@@ -483,9 +485,6 @@ implements DParserListener
 	}
     }
 
-
-    /*****/
-
     ControlP5 cp5;
     DoodleButton[] toolsBar;
     
@@ -519,6 +518,7 @@ implements DParserListener
     public void setup ()
     {
 	size( 500, 500 );
+	
 	globX = globXDefault;
 	globY = globYDefault;
 	
@@ -546,7 +546,6 @@ implements DParserListener
 			importFromCode();
 		    }
 		};
-	    
 	    }
 	    else if ( i == 5 )
 	    {
@@ -908,19 +907,19 @@ implements DParserListener
 	    }
 	    else
 	    {
-		    if ( shapes == null )
-		    {
-			    shapes = new RSubshape[] {
-				    new RSubshape( clicked.x, clicked.y )
-			    };
-		    }
-		    else
-		    {
-			    shapes = (RSubshape[])append( shapes, new RSubshape( clicked.x, clicked.y ) );
-		    }
-		    
-		    lastClicked = clicked;
-		    lastShape = shapes[shapes.length-1];
+		if ( shapes == null )
+		{
+		    shapes = new RSubshape[] {
+			 new RSubshape( clicked.x, clicked.y )
+		    };
+		}
+		else
+		{
+		    shapes = (RSubshape[])append( shapes, new RSubshape( clicked.x, clicked.y ) );
+		}
+		
+		lastClicked = clicked;
+		lastShape = shapes[shapes.length-1];
 			    
 		selectedShape = shapes[shapes.length-1];
 		selectedShapeIndex = shapes.length-1;
@@ -977,7 +976,6 @@ implements DParserListener
     class SelectEditMovePointTool
     extends DTool
     {
-	float[] clicked;
 	RCommand[] selectedSegments;
 	RPoint selectedPoint;
 	int selectedPointType;
@@ -997,7 +995,8 @@ implements DParserListener
 		    RPoint[] pnts = shapes[i].commands[ii].getPoints();
 		    for ( int iii = 0; iii < pnts.length; iii++ )
 		    {
-			float cd = (5*globSRev);
+			float cd = (5*globSRev); /* click distance */
+			
 			if ( pnts[iii].x > mx - cd && pnts[iii].x < mx + cd && 
 			     pnts[iii].y > my - cd && pnts[iii].y < my + cd )
 			{
@@ -1005,8 +1004,8 @@ implements DParserListener
 			    selectedPoint = pnts[iii];
 			    selectedShape = shapes[i];
 			    selectedShapeIndex = i;
-			    clicked = new float[]{ mx, my };
 			    selectedSegments[0] = shapes[i].commands[ii];
+			    
 			    if ( ii == 0 && iii < 2 )
 			    {
 				selectedSegments[1] = shapes[i].commands[shapes[i].commands.length-1];
@@ -1058,7 +1057,9 @@ implements DParserListener
 	    {
 		selectedPoint.x += xd;
 		selectedPoint.y += yd;
+		
 		RPoint[] pnts = selectedSegments[0].getPoints();
+		
 		switch ( selectedSegments[0].getCommandType() )
 		{
 		    case RCommand.CUBICBEZIERTO:
