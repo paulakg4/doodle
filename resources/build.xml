@@ -9,9 +9,9 @@
   <property name="libraryClasspath" location="/Applications/Processing.app/Contents/Resources/Java" />
   
   <property name="author" value="Florian Jenett" />
-  <property name="copyright" value="(c) 2008-2010" />
+  <property name="copyright" value="(c) 2008-2011" />
   <property name="toolName" value="Doodle" />
-  <property name="versionNumber" value="0.0.5" />
+  <property name="versionNumber" value="0.0.6" />
   <property name="yourLink" value="http://www.bezier.de/" />
   <property name="javaVersion" value="1.5" />
   <path id="library-classpath">

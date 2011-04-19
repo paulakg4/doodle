@@ -59,6 +59,11 @@ implements Tool, WindowListener
 
     public void run ()
     {
+		if ( editor.getMode().getClass() != processing.mode.java.JavaMode.class )
+		{
+			System.err.println( "This tool might only work with the standard Java mode. It has not been tested otherwise." );
+		}
+		
         startupmsg = true;
         running = false;
         
